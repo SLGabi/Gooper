@@ -1,0 +1,130 @@
+[gd_scene load_steps=18 format=3 uid="uid://70m806yvpjys"]
+
+[ext_resource type="Script" path="res://Player.gd" id="1_lbn4h"]
+[ext_resource type="Texture2D" uid="uid://dbnnh8camlfdt" path="res://images/Attack_1.png" id="2_2qjsq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8wvkh"]
+size = Vector2(36, 185)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kyu7j"]
+size = Vector2(51, 197)
+
+[sub_resource type="Animation" id="Animation_7v1x7"]
+resource_name = "girl_down"
+length = 0.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 4]
+}
+
+[sub_resource type="Animation" id="Animation_ag16e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ipb76"]
+_data = {
+"RESET": SubResource("Animation_ag16e"),
+"girl_down": SubResource("Animation_7v1x7")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_r2m53"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wfh74"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ihdc8"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rwwep"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_c650o"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gd0uh"]
+animation = &"girl_down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vown5"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_hf3x2"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_r2m53")
+blend_point_0/pos = Vector2(-1, -1)
+blend_point_1/node = SubResource("AnimationNodeAnimation_wfh74")
+blend_point_1/pos = Vector2(-1, 1)
+blend_point_2/node = SubResource("AnimationNodeAnimation_ihdc8")
+blend_point_2/pos = Vector2(-1, 0)
+blend_point_3/node = SubResource("AnimationNodeAnimation_rwwep")
+blend_point_3/pos = Vector2(-0.6, 0)
+blend_point_4/node = SubResource("AnimationNodeAnimation_c650o")
+blend_point_4/pos = Vector2(-0.6, 0)
+blend_point_5/node = SubResource("AnimationNodeAnimation_gd0uh")
+blend_point_5/pos = Vector2(0, 0)
+blend_point_6/node = SubResource("AnimationNodeAnimation_vown5")
+blend_point_6/pos = Vector2(-0.6, 0)
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_80f3m"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_i2bpf"]
+states/End/position = Vector2(729, 119)
+states/Idle/node = SubResource("AnimationNodeBlendSpace2D_hf3x2")
+states/Idle/position = Vector2(599, 119)
+states/Start/position = Vector2(469, 119)
+transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_80f3m")]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_lbn4h")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(11, -67)
+scale = Vector2(1.7002, 2.36632)
+texture = ExtResource("2_2qjsq")
+hframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_8wvkh")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("RectangleShape2D_kyu7j")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+speed_scale = 0.7
+libraries = {
+"": SubResource("AnimationLibrary_ipb76")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_i2bpf")
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/Idle/blend_position = Vector2(-0.8784, 0.537118)
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
